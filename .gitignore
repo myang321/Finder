@@ -1,0 +1,7 @@
+.idea/
+Finder2.iml
+.gradle/
+app/app.iml
+build/
+local.properties
+gradle/wrapper/gradle-wrapper.jar

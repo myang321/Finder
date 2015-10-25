@@ -1,4 +1,4 @@
-package com.example.steve.finder2;
+package com.example.steve.finder2.gcm;
 
 import android.app.Service;
 import android.content.Intent;

@@ -1,12 +1,14 @@
-package com.example.steve.finder2;
+package com.example.steve.finder2.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.steve.finder2.R;
 
-public class Login extends Activity {
+
+public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,4 +1,4 @@
-package com.example.steve.finder2;
+package com.example.steve.finder2.gcm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

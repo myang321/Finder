@@ -11,4 +11,6 @@ public class Const {
 
     public static String PHONE_STATUS_LOST = "phone_status_lost";
     public static String PHONE_STATUS_NOT_LOST = "phone_status_not_lost";
+
+    public static int REPORT_INTERVAL = 1000 * 5;
 }

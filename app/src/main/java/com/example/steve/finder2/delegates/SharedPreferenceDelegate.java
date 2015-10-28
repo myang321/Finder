@@ -11,12 +11,12 @@ import com.example.steve.finder2.constants.Const;
  */
 public class SharedPreferenceDelegate {
     private SharedPreferences sharedPref = null;
-    private Activity activity = null;
+    private Context context = null;
 
     // constructor
-    public SharedPreferenceDelegate(Activity activity) {
-        this.activity = activity;
-        this.sharedPref = activity.getSharedPreferences(Const.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+    public SharedPreferenceDelegate(Context context) {
+        this.context = context;
+        this.sharedPref = context.getSharedPreferences(Const.SHARED_PREF_NAME, Context.MODE_PRIVATE);
     }
 
     // set string

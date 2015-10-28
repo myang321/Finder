@@ -25,6 +25,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         sharedPreferenceDelegate = new SharedPreferenceDelegate(this);
         setText();
+        if (isLostModeOn())
+            startLostMode(null);
     }
 
     private void setText() {
@@ -90,6 +92,7 @@ public class MainActivity extends Activity {
     public void startLostMode(View view) {
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_LOST);
         Intent mServiceIntent = new Intent(this, ReportService.class);
+        mServiceIntent.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
         startService(mServiceIntent);
     }
 
@@ -128,6 +131,10 @@ public class MainActivity extends Activity {
 
     private void stopLostMode() {
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_NOT_LOST);
+    }
+
+    private String getUsername() {
+        return sharedPreferenceDelegate.getSharedPrefsString(Const.SHARED_PREF_USERNAME);
     }
 
 

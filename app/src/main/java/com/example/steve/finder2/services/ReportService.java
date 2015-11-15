@@ -29,6 +29,8 @@ public class ReportService extends IntentService {
 
     //    private SharedPreferenceDelegate sharedPreferenceDelegate = null;
     private String username;
+    private double loc_x = 0;
+    private double loc_y = 0;
 
     public ReportService() {
         super("ReportService");
@@ -40,14 +42,21 @@ public class ReportService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d("meng", "service on handle intent");
         username = intent.getStringExtra(Const.SHARED_PREF_USERNAME);
+        startReport();
+
+    }
+
+    private void startReport() {
         while (true) {
+            Log.d("meng", "in report service loop");
             MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
                 @Override
                 public void gotLocation(Location location) {
                     //Got the location!
-                    Log.d("meng", "location x=" + location.getLatitude() + " y=" + location.getAltitude());
+                    Log.d("meng", "got location x=" + location.getLatitude() + " y=" + location.getAltitude());
                     Log.d("meng", "accuracy " + location.getAccuracy());
-                    sendReport(location.getLatitude(), location.getAltitude());
+                    loc_x = location.getLatitude();
+                    loc_y = location.getAltitude();
                 }
             };
             MyLocation myLocation = new MyLocation();
@@ -58,10 +67,11 @@ public class ReportService extends IntentService {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            sendReport();
         }
     }
 
-    private void sendReport(double loc_x, double loc_y) {
+    private void sendReport() {
         String date = Utils.getTimestamp();
         String uriBase1 = "http://finderserver.sinaapp.com/finder_server/upload_report_mobile?";
         String uriBase2 = "username=%s&timestamp=%s&location_x=%.6f&location_y=%.6f&ip_addr=192.168.1.1&wifi_name=kandedan&device_name=iphone";

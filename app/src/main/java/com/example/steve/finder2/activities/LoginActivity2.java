@@ -278,7 +278,7 @@ public class LoginActivity2 extends Activity implements LoaderCallbacks<Cursor> 
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_NOT_LOST);
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_USERNAME, username);
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PASSWORD, password);
-        Log.d("meng", "save password " + password);
+//        Log.d("meng", "save password " + password);
     }
 
     /**
@@ -345,9 +345,8 @@ public class LoginActivity2 extends Activity implements LoaderCallbacks<Cursor> 
                 authJsonStr = buffer.toString();
                 Log.d("meng", authJsonStr);
             } catch (IOException e) {
-                Log.e("PlaceholderFragment", "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
+                Log.e("IOException", "Error ", e);
+                e.printStackTrace();
                 authJsonStr = "IO error";
             } finally {
                 if (urlConnection != null) {
@@ -362,7 +361,7 @@ public class LoginActivity2 extends Activity implements LoaderCallbacks<Cursor> 
                 }
             }
             boolean result = authJsonStr.trim().equals("{\"auth\": \"pass\"}");
-            Log.d("meng", "login result " + result);
+//            Log.d("meng", "login result " + result);
             return result;
         }
 

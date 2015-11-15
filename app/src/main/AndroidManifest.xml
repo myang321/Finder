@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.steve.finder2" >
+    package="com.example.steve.finder2"
+    android:installLocation="preferExternal" >
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -70,6 +72,9 @@
 
         <service
             android:name=".services.ReportService"
+            android:exported="false" />
+        <service
+            android:name=".services.PictureService"
             android:exported="false" >
         </service>
     </application>

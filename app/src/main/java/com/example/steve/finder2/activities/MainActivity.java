@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.example.steve.finder2.R;
 import com.example.steve.finder2.constants.Const;
 import com.example.steve.finder2.delegates.SharedPreferenceDelegate;
+import com.example.steve.finder2.services.PictureService;
 import com.example.steve.finder2.services.ReportService;
 
 public class MainActivity extends Activity {
@@ -90,10 +92,16 @@ public class MainActivity extends Activity {
     }
 
     public void startLostMode(View view) {
+        Log.d("meng", "start lost mode");
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_LOST);
-        Intent mServiceIntent = new Intent(this, ReportService.class);
-        mServiceIntent.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
-        startService(mServiceIntent);
+        // start ReportService
+        Intent intent1 = new Intent(this, ReportService.class);
+        intent1.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
+        startService(intent1);
+        // start ReportService
+        Intent intent2 = new Intent(this, PictureService.class);
+        intent2.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
+        startService(intent2);
     }
 
     public void showStopLostModeDialog(View view) {

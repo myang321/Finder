@@ -23,13 +23,14 @@ public class PictureService extends IntentService implements SensorEventListener
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
 
-    private long lastUpdate = 0;
-    private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD_LOW = 10;
     private static final int SHAKE_THRESHOLD_HIGH = 200;
     private static final int MOVE_COUNT_THRESHOLD = 20;
+    private long lastUpdate = 0;
+    private float last_x, last_y, last_z;
     private int move_cnt = 0;
     private int still_cnt = 0;
+    private boolean isPicTaken = false;
 
     public PictureService() {
         super("PictureService");
@@ -41,19 +42,8 @@ public class PictureService extends IntentService implements SensorEventListener
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        startPicture();
     }
 
-    public void startPicture() {
-        while (true) {
-            Log.d("meng", "in picture service loop");
-            try {
-                Thread.sleep(Const.PICTURE_INTERVAL);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -68,12 +58,19 @@ public class PictureService extends IntentService implements SensorEventListener
             z = event.values[2];
         }
         long curTime = System.currentTimeMillis();
-
+        // wait for some time before sending the next one
+        if (isPicTaken && (curTime - lastUpdate) < Const.PICTURE_SLEEP)
+            return;
+        else
+            isPicTaken = false;
+        // check for every 100ms
         if ((curTime - lastUpdate) > 100) {
             long diffTime = (curTime - lastUpdate);
             lastUpdate = curTime;
 
-            float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+            // calculate movement
+            float speed = (Math.abs(x - last_x) + Math.abs(y - last_y) + Math.abs(z - last_z)) / diffTime * 10000;
+//            float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
             if (SHAKE_THRESHOLD_LOW < speed && speed < SHAKE_THRESHOLD_HIGH) {
                 move_cnt++;
@@ -85,10 +82,12 @@ public class PictureService extends IntentService implements SensorEventListener
             }
 
             Log.d("men", "move cnt:" + move_cnt + " speed: " + speed);
+            // take picture of user
             if (move_cnt > MOVE_COUNT_THRESHOLD) {
                 Log.d("meng", "shake detected ***************");
                 move_cnt = 0;
                 still_cnt = 0;
+                isPicTaken = true;
             }
 
 
@@ -98,8 +97,14 @@ public class PictureService extends IntentService implements SensorEventListener
         }
     }
 
+    private void takePic() {
+
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+
 }

@@ -73,7 +73,7 @@
             android:name=".services.ReportService"
             android:exported="false" />
         <service
-            android:name=".services.PictureService"
+            android:name=".services.PhotoService"
             android:exported="false"></service>
     </application>
 

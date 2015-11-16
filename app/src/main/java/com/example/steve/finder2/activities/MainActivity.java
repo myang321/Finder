@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.example.steve.finder2.R;
 import com.example.steve.finder2.constants.Const;
 import com.example.steve.finder2.delegates.SharedPreferenceDelegate;
-import com.example.steve.finder2.services.PictureService;
+import com.example.steve.finder2.services.PhotoService;
 import com.example.steve.finder2.services.ReportService;
 
 public class MainActivity extends Activity {
@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
         intent1.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
         startService(intent1);
         // start ReportService
-        Intent intent2 = new Intent(this, PictureService.class);
+        Intent intent2 = new Intent(this, PhotoService.class);
         intent2.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
         startService(intent2);
     }

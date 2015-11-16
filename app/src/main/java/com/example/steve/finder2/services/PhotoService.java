@@ -18,7 +18,7 @@ import com.example.steve.finder2.constants.Const;
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
-public class PictureService extends IntentService implements SensorEventListener {
+public class PhotoService extends IntentService implements SensorEventListener {
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
@@ -32,8 +32,8 @@ public class PictureService extends IntentService implements SensorEventListener
     private int still_cnt = 0;
     private boolean isPicTaken = false;
 
-    public PictureService() {
-        super("PictureService");
+    public PhotoService() {
+        super("PhotoService");
 
     }
 

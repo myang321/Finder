@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.steve.finder2.R;
 import com.example.steve.finder2.constants.Const;
 import com.example.steve.finder2.delegates.SharedPreferenceDelegate;
+import com.example.steve.finder2.services.CameraService;
 import com.example.steve.finder2.services.PhotoService;
 import com.example.steve.finder2.services.ReportService;
 
@@ -27,8 +28,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         sharedPreferenceDelegate = new SharedPreferenceDelegate(this);
         setText();
-        if (isLostModeOn())
-            startLostMode(null);
+//        if (isLostModeOn())
+//            startLostMode(null);
     }
 
     private void setText() {
@@ -95,13 +96,16 @@ public class MainActivity extends Activity {
         Log.d("meng", "start lost mode");
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_LOST);
         // start ReportService
-        Intent intent1 = new Intent(this, ReportService.class);
-        intent1.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
-        startService(intent1);
-        // start ReportService
-        Intent intent2 = new Intent(this, PhotoService.class);
-        intent2.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
-        startService(intent2);
+//        Intent intent1 = new Intent(this, ReportService.class);
+//        intent1.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
+//        startService(intent1);
+//        // start ReportService
+//        Intent intent2 = new Intent(this, PhotoService.class);
+//        intent2.putExtra(Const.SHARED_PREF_USERNAME, getUsername());
+//        startService(intent2);
+
+        Intent intent3 = new Intent(this, CameraService.class);
+        startService(intent3);
     }
 
     public void showStopLostModeDialog(View view) {

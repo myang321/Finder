@@ -3,13 +3,20 @@ package com.example.steve.finder2.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import com.example.steve.finder2.constants.Const;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -31,6 +38,34 @@ public class PhotoService extends IntentService implements SensorEventListener {
     private int move_cnt = 0;
     private int still_cnt = 0;
     private boolean isPicTaken = false;
+
+
+    //Camera variables
+    //a surface holder
+    private SurfaceHolder sHolder;
+    //a variable to control the camera
+    private Camera mCamera;
+    //the camera parameters
+    private Camera.Parameters parameters;
+
+    Camera.PictureCallback mCall = new Camera.PictureCallback() {
+
+        public void onPictureTaken(byte[] data, Camera camera) {
+            //decode the data obtained by the camera into a Bitmap
+
+            FileOutputStream outStream = null;
+            try {
+                outStream = new FileOutputStream("/sdcard/Image2.jpg");
+                outStream.write(data);
+                outStream.close();
+            } catch (FileNotFoundException e) {
+                Log.d("meng", e.getMessage());
+            } catch (IOException e) {
+                Log.d("meng", e.getMessage());
+            }
+
+        }
+    };
 
     public PhotoService() {
         super("PhotoService");
@@ -88,9 +123,8 @@ public class PhotoService extends IntentService implements SensorEventListener {
                 move_cnt = 0;
                 still_cnt = 0;
                 isPicTaken = true;
+                takePic();
             }
-
-
             last_x = x;
             last_y = y;
             last_z = z;
@@ -98,7 +132,29 @@ public class PhotoService extends IntentService implements SensorEventListener {
     }
 
     private void takePic() {
+        mCamera = Camera.open();
+        SurfaceView sv = new SurfaceView(getApplicationContext());
 
+
+        try {
+            mCamera.setPreviewDisplay(sv.getHolder());
+            parameters = mCamera.getParameters();
+
+            //set camera parameters
+            mCamera.setParameters(parameters);
+            mCamera.startPreview();
+            mCamera.takePicture(null, null, mCall);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        //Get a surface
+        sHolder = sv.getHolder();
+        //tells Android that this surface will have its data constantly replaced
+        sHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     @Override

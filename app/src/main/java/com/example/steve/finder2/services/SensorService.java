@@ -25,7 +25,7 @@ import java.io.IOException;
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
-public class PhotoService extends IntentService implements SensorEventListener {
+public class SensorService extends IntentService implements SensorEventListener {
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
@@ -40,35 +40,8 @@ public class PhotoService extends IntentService implements SensorEventListener {
     private boolean isPicTaken = false;
 
 
-    //Camera variables
-    //a surface holder
-    private SurfaceHolder sHolder;
-    //a variable to control the camera
-    private Camera mCamera;
-    //the camera parameters
-    private Camera.Parameters parameters;
-
-    Camera.PictureCallback mCall = new Camera.PictureCallback() {
-
-        public void onPictureTaken(byte[] data, Camera camera) {
-            //decode the data obtained by the camera into a Bitmap
-
-            FileOutputStream outStream = null;
-            try {
-                outStream = new FileOutputStream("/sdcard/Image2.jpg");
-                outStream.write(data);
-                outStream.close();
-            } catch (FileNotFoundException e) {
-                Log.d("meng", e.getMessage());
-            } catch (IOException e) {
-                Log.d("meng", e.getMessage());
-            }
-
-        }
-    };
-
-    public PhotoService() {
-        super("PhotoService");
+    public SensorService() {
+        super("SensorService");
 
     }
 
@@ -132,29 +105,8 @@ public class PhotoService extends IntentService implements SensorEventListener {
     }
 
     private void takePic() {
-        mCamera = Camera.open();
-        SurfaceView sv = new SurfaceView(getApplicationContext());
-
-
-        try {
-            mCamera.setPreviewDisplay(sv.getHolder());
-            parameters = mCamera.getParameters();
-
-            //set camera parameters
-            mCamera.setParameters(parameters);
-            mCamera.startPreview();
-            mCamera.takePicture(null, null, mCall);
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-
-        //Get a surface
-        sHolder = sv.getHolder();
-        //tells Android that this surface will have its data constantly replaced
-        sHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        Intent intent = new Intent(this, CameraService.class);
+        startService(intent);
     }
 
     @Override

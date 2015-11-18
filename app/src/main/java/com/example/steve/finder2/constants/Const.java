@@ -14,4 +14,5 @@ public class Const {
 
     public static int REPORT_INTERVAL = 1000 * 10;
     public static int PICTURE_SLEEP = 1000 * 60;
+    public static int CHECK_INTERVAL = 1000 * 10;
 }

@@ -38,6 +38,7 @@ public class SensorService extends IntentService implements SensorEventListener 
     private int move_cnt = 0;
     private int still_cnt = 0;
     private boolean isPicTaken = false;
+    private String username;
 
 
     public SensorService() {
@@ -50,6 +51,7 @@ public class SensorService extends IntentService implements SensorEventListener 
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        username = intent.getStringExtra(Const.SHARED_PREF_USERNAME);
     }
 
 
@@ -106,6 +108,7 @@ public class SensorService extends IntentService implements SensorEventListener 
 
     private void takePic() {
         Intent intent = new Intent(this, CameraService.class);
+        intent.putExtra(Const.SHARED_PREF_USERNAME, username);
         startService(intent);
     }
 

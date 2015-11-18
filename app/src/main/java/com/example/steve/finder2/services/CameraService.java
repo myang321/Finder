@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.steve.finder2.constants.Const;
+import com.example.steve.finder2.delegates.Utils;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -30,6 +32,7 @@ public class CameraService extends Service {
     //the camera parameters
     private Camera.Parameters parameters;
     private SurfaceView sv;
+    private String username;
 
     /**
      * Called when the activity is first created.
@@ -44,7 +47,7 @@ public class CameraService extends Service {
     public void onStart(Intent intent, int startId) {
         // TODO Auto-generated method stub
         super.onStart(intent, startId);
-
+        username = intent.getStringExtra(Const.SHARED_PREF_USERNAME);
         releaseCameraAndPreview();
         mCamera = Camera.open(1);
         sv = new SurfaceView(getApplicationContext());
@@ -111,8 +114,9 @@ public class CameraService extends Service {
             params.put("image", image);
         } catch (FileNotFoundException e) {
         }
-        params.put("username", "aaa");
+        params.put("username", username);
         params.put("device_name", device_name);
+        // real time stamp cause problem
         params.put("timestamp", "123");
 
         // send request

@@ -8,9 +8,18 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CameraService extends Service {
     //Camera variables
@@ -37,7 +46,6 @@ public class CameraService extends Service {
         super.onStart(intent, startId);
 
         releaseCameraAndPreview();
-        // 1 is front camera
         mCamera = Camera.open(1);
         sv = new SurfaceView(getApplicationContext());
 
@@ -63,6 +71,16 @@ public class CameraService extends Service {
         sHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
+    public String getTimestamp() {
+        String date = dateToString(new Date());
+        date = date.replace(" ", "_");
+        return date;
+    }
+
+    public String dateToString(Date date) {
+        Timestamp ts = new Timestamp(date.getTime());
+        return ts.toString();
+    }
 
     Camera.PictureCallback mCall = new Camera.PictureCallback() {
 
@@ -70,8 +88,9 @@ public class CameraService extends Service {
             //decode the data obtained by the camera into a Bitmap
 
             FileOutputStream outStream = null;
+            String filepath = "/sdcard/" + getTimestamp() + ".jpg";
             try {
-                outStream = new FileOutputStream("/sdcard/Image3.jpg");
+                outStream = new FileOutputStream(filepath);
                 outStream.write(data);
                 outStream.close();
             } catch (FileNotFoundException e) {
@@ -79,9 +98,40 @@ public class CameraService extends Service {
             } catch (IOException e) {
                 Log.d("CAMERA", e.getMessage());
             }
+            File image = new File(filepath);
+            sendPhoto(image, "iphone7");
+            releaseCameraAndPreview();
 
         }
     };
+
+    private void sendPhoto(File image, String device_name) {
+        RequestParams params = new RequestParams();
+        try {
+            params.put("image", image);
+        } catch (FileNotFoundException e) {
+        }
+        params.put("username", "aaa");
+        params.put("device_name", device_name);
+        params.put("timestamp", "123");
+
+        // send request
+        String url = "http://finderserver.sinaapp.com/finder_server/image_upload";
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] bytes) {
+                // handle success response
+                Log.d("meng", "image sent successfully");
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] bytes, Throwable throwable) {
+                // handle failure response
+                Log.d("meng", "image sent failed");
+            }
+        });
+    }
 
     private void releaseCameraAndPreview() {
         if (mCamera != null) {

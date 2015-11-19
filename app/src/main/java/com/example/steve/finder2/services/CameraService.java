@@ -3,6 +3,7 @@ package com.example.steve.finder2.services;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -14,14 +15,30 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.ResponseHandler;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.entity.mime.content.FileBody;
+import cz.msebera.android.httpclient.impl.client.BasicResponseHandler;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class CameraService extends Service {
     //Camera variables
@@ -102,39 +119,47 @@ public class CameraService extends Service {
                 Log.d("CAMERA", e.getMessage());
             }
             File image = new File(filepath);
-            sendPhoto(image, "iphone7");
+            sendPhoto(image);
             releaseCameraAndPreview();
 
         }
     };
 
-    private void sendPhoto(File image, String device_name) {
-        RequestParams params = new RequestParams();
-        try {
-            params.put("image", image);
-        } catch (FileNotFoundException e) {
-        }
-        params.put("username", username);
-        params.put("device_name", device_name);
-        // real time stamp cause problem
-        params.put("timestamp", "123");
-
-        // send request
-        String url = "http://finderserver.sinaapp.com/finder_server/image_upload";
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.post(url, params, new AsyncHttpResponseHandler() {
+    private void sendPhoto(final File image) {
+        Thread t = new Thread() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] bytes) {
-                // handle success response
-                Log.d("meng", "image sent successfully");
+            public void run() {
+                super.run();
+                HttpClient client = new DefaultHttpClient();
+                String url = "http://finderserver.sinaapp.com/finder_server/image_upload";
+                HttpPost post = new HttpPost(url);
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                builder.addPart("image", new FileBody(image));
+                builder.addTextBody("username", username);
+                builder.addTextBody("device_name", Build.MODEL);
+                builder.addTextBody("timestamp", Utils.getTimestamp());
+                post.setEntity(builder.build());
+                HttpResponse response = null;
+                try {
+                    response = client.execute(post);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("meng", "IOException in execute");
+                }
+                HttpEntity entity = response.getEntity();
+                Log.d("meng", "before  responseString");
+                try {
+                    entity.consumeContent();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                client.getConnectionManager().shutdown();
+                Log.d("meng", "upload image done");
             }
+        };
+        t.start();
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] bytes, Throwable throwable) {
-                // handle failure response
-                Log.d("meng", "image sent failed");
-            }
-        });
     }
 
     private void releaseCameraAndPreview() {

@@ -1,5 +1,7 @@
 package com.example.steve.finder2.delegates;
 
+import android.os.Build;
+
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -16,5 +18,9 @@ public class Utils {
     public static String dateToString(Date date) {
         Timestamp ts = new Timestamp(date.getTime());
         return ts.toString();
+    }
+
+    public static String getDeviceName() {
+        return Build.MANUFACTURER + "_" + Build.MODEL;
     }
 }

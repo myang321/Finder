@@ -12,7 +12,7 @@ public class Const {
     public static String PHONE_STATUS_LOST = "phone_status_lost";
     public static String PHONE_STATUS_NOT_LOST = "phone_status_not_lost";
 
-    public static int REPORT_INTERVAL = 1000 * 1000;
+    public static int REPORT_INTERVAL = 1000 * 10;
     public static int PICTURE_SLEEP = 1000 * 60;
     public static int CHECK_INTERVAL = 1000 * 10;
 }

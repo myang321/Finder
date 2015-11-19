@@ -137,7 +137,7 @@ public class CameraService extends Service {
                 builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 builder.addPart("image", new FileBody(image));
                 builder.addTextBody("username", username);
-                builder.addTextBody("device_name", Build.MODEL);
+                builder.addTextBody("device_name", Utils.getDeviceName());
                 builder.addTextBody("timestamp", Utils.getTimestamp());
                 post.setEntity(builder.build());
                 HttpResponse response = null;

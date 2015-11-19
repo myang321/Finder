@@ -13,6 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.steve.finder2.constants.Const;
+import com.example.steve.finder2.delegates.Utils;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -57,6 +58,9 @@ public class SensorService extends IntentService implements SensorEventListener 
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+
+        if (!Utils.isScreenOn(this))
+            return;
         Sensor mySensor = event.sensor;
 
         float x = 0;

@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 import android.location.Location;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.example.steve.finder2.constants.Const;
@@ -76,7 +78,7 @@ public class ReportService extends IntentService {
         String uriBase1 = "http://finderserver.sinaapp.com/finder_server/upload_report_mobile?";
         String uriBase2 = "username=%s&timestamp=%s&location_x=%.6f&location_y=%.6f&ip_addr=%s&wifi_name=%s&device_name=%s";
         String ip = Utils.getIPAddress(true);
-        String wifi = "wifi";
+        String wifi = getWifiName();
         String device_name = Utils.getDeviceName();
         String struri = String.format(uriBase1 + uriBase2, username, date, loc_x, loc_y, ip, wifi, device_name);
         Log.d("meng", struri);
@@ -108,6 +110,12 @@ public class ReportService extends IntentService {
                 urlConnection.disconnect();
             }
         }
+    }
+
+    public String getWifiName() {
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifiManager.getConnectionInfo();
+        return info.getSSID();
     }
 
 }

@@ -75,7 +75,7 @@ public class ReportService extends IntentService {
         String date = Utils.getTimestamp();
         String uriBase1 = "http://finderserver.sinaapp.com/finder_server/upload_report_mobile?";
         String uriBase2 = "username=%s&timestamp=%s&location_x=%.6f&location_y=%.6f&ip_addr=%s&wifi_name=%s&device_name=%s";
-        String ip = "1.2.3.4";
+        String ip = Utils.getIPAddress(true);
         String wifi = "wifi";
         String device_name = Utils.getDeviceName();
         String struri = String.format(uriBase1 + uriBase2, username, date, loc_x, loc_y, ip, wifi, device_name);

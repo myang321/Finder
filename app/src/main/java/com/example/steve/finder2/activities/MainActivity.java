@@ -28,6 +28,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         sharedPreferenceDelegate = new SharedPreferenceDelegate(this);
         setText();
+        Log.d("meng1", "main activity oncreate");
         if (isLostModeOn())
             startLostMode(null);
         else
@@ -44,6 +45,7 @@ public class MainActivity extends Activity {
 
     private boolean isLostModeOn() {
         String mode = sharedPreferenceDelegate.getSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS);
+        Log.d("meng1", "lost mode " + mode);
         return mode.equals(Const.PHONE_STATUS_LOST);
     }
 
@@ -57,9 +59,11 @@ public class MainActivity extends Activity {
     private void logout() {
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_USERNAME, "");
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PASSWORD, "");
+        stopLostMode();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
+
     }
 
     public void showLogoutDialog(View view) {
@@ -145,6 +149,10 @@ public class MainActivity extends Activity {
 
     private void stopLostMode() {
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_NOT_LOST);
+        Log.d("meng1", "stopService ReportService");
+        stopService(new Intent(this, ReportService.class));
+        Log.d("meng1", "stopService SensorService");
+        stopService(new Intent(this, SensorService.class));
     }
 
     private String getUsername() {

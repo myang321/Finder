@@ -13,6 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.steve.finder2.constants.Const;
+import com.example.steve.finder2.delegates.SharedPreferenceDelegate;
 import com.example.steve.finder2.delegates.Utils;
 
 import java.io.FileNotFoundException;
@@ -40,7 +41,7 @@ public class SensorService extends IntentService implements SensorEventListener 
     private int still_cnt = 0;
     private boolean isPicTaken = false;
     private String username;
-
+    private SharedPreferenceDelegate sharedPreferenceDelegate = null;
 
     public SensorService() {
         super("SensorService");
@@ -49,15 +50,35 @@ public class SensorService extends IntentService implements SensorEventListener 
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (sharedPreferenceDelegate == null)
+            sharedPreferenceDelegate = new SharedPreferenceDelegate(this);
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         username = intent.getStringExtra(Const.SHARED_PREF_USERNAME);
+        Log.d("meng1", "sensor service onHandleIntent exit");
     }
 
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("meng1", "onDestroy sensor service");
+    }
+
+    private boolean isLostModeOn() {
+        String mode = sharedPreferenceDelegate.getSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS);
+//        Log.d("meng1", "lost mode " + mode);
+        return mode.equals(Const.PHONE_STATUS_LOST);
+    }
+
+    @Override
     public void onSensorChanged(SensorEvent event) {
+        if (!isLostModeOn()) {
+            Log.d("meng1", "unregisterListener sensor");
+            senSensorManager.unregisterListener(this);
+            return;
+        }
 
         if (!Utils.isScreenOn(this))
             return;

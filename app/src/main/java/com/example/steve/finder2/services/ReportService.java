@@ -35,23 +35,38 @@ public class ReportService extends IntentService {
     private String username;
     private double loc_x = 0;
     private double loc_y = 0;
+    private SharedPreferenceDelegate sharedPreferenceDelegate = null;
 
     public ReportService() {
         super("ReportService");
 //        sharedPreferenceDelegate = new SharedPreferenceDelegate(this);
         Log.d("meng", "service constructor");
+
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (sharedPreferenceDelegate == null)
+            sharedPreferenceDelegate = new SharedPreferenceDelegate(this);
         Log.d("meng", "service on handle intent");
         username = intent.getStringExtra(Const.SHARED_PREF_USERNAME);
         startReport();
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("meng1", "onDestroy report service");
+    }
+
+    private boolean isLostModeOn() {
+        String mode = sharedPreferenceDelegate.getSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS);
+        return mode.equals(Const.PHONE_STATUS_LOST);
+    }
+
     private void startReport() {
-        while (true) {
+        while (isLostModeOn()) {
             Log.d("meng", "in report service loop");
             MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
                 @Override

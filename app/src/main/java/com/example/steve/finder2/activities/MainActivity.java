@@ -99,6 +99,7 @@ public class MainActivity extends Activity {
     }
 
     public void startLostMode(View view) {
+        setText();
         Log.d("meng", "start lost mode");
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_LOST);
         // start ReportService
@@ -148,6 +149,7 @@ public class MainActivity extends Activity {
     }
 
     private void stopLostMode() {
+        setText();
         sharedPreferenceDelegate.setSharedPrefsString(Const.SHARED_PREF_PHONE_STATUS, Const.PHONE_STATUS_NOT_LOST);
         Log.d("meng1", "stopService ReportService");
         stopService(new Intent(this, ReportService.class));

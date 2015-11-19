@@ -3,9 +3,11 @@ package com.example.steve.finder2.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.util.Log;
 
 import com.example.steve.finder2.constants.Const;
@@ -63,9 +65,17 @@ public class ReportService extends IntentService {
             };
             MyLocation myLocation = new MyLocation();
             myLocation.getLocation(this, locationResult);
-
+            float battery = getBatteryLevel();
+            int sleepTime = Const.REPORT_INTERVAL;
+            if (battery < 30 && battery > 20)
+                sleepTime *= 3;
+            else if (battery < 20 && battery > 10)
+                sleepTime *= 12;
+            else if (battery < 10)
+                sleepTime *= 60;
+            Log.d("meng", "battery :" + battery);
             try {
-                Thread.sleep(Const.REPORT_INTERVAL);
+                Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -116,6 +126,14 @@ public class ReportService extends IntentService {
         WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
         return info.getSSID();
+    }
+
+    public float getBatteryLevel() {
+        Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        return ((float) level / (float) scale) * 100.0f;
     }
 
 }

@@ -75,7 +75,7 @@ public class ReportService extends IntentService {
                     Log.d("meng", "got location x=" + location.getLatitude() + " y=" + location.getAltitude());
                     Log.d("meng", "accuracy " + location.getAccuracy());
                     loc_x = location.getLatitude();
-                    loc_y = location.getAltitude();
+                    loc_y = location.getLongitude();
                 }
             };
             MyLocation myLocation = new MyLocation();
